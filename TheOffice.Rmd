@@ -1,0 +1,34 @@
+---
+title: "TidyTuesday - March 17, 2020"
+author: "Kelly B"
+date: "March 21, 2020"
+output: html_document
+---
+
+Set Up Workspace
+```{r}
+# Load library
+library(tidyverse)
+library(ggridges)
+library(RColorBrewer)
+
+office_ratings <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-17/office_ratings.csv')
+```
+
+Data Investigation
+```{r}
+head(office_ratings)
+
+office_ratings$season = as.factor(office_ratings$season)
+office_ratings$episode = as.factor(office_ratings$episode)
+```
+Season Ratings
+```{r}
+maxRating = office_ratings %>%
+   group_by(season) %>%
+   slice(which.max(imdb_rating))
+
+ggplot(office_ratings, aes(x = imdb_rating, y = fct_rev(as_factor(season)), fill = season)) + geom_density_ridges() +geom_point(data = maxRating, aes(x = maxRating$imdb_rating, y = maxRating$season, label = title), inherit.aes = F) + geom_label(data = maxRating, aes(label = title), nudge_x = 0.25, nudge_y = 0.5) + theme_minimal() + theme(legend.position = "none") + scale_fill_brewer(palette="Spectral") + labs(x = "IMDB Rating", y = "Season")
+```
+
+
