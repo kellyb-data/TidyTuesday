@@ -28,7 +28,7 @@ maxRating = office_ratings %>%
    group_by(season) %>%
    slice(which.max(imdb_rating))
 
-ggplot(office_ratings, aes(x = imdb_rating, y = fct_rev(as_factor(season)), fill = season)) + geom_density_ridges() +geom_point(data = maxRating, aes(x = maxRating$imdb_rating, y = maxRating$season, label = title), inherit.aes = F) + geom_label(data = maxRating, aes(label = title), nudge_x = 0.25, nudge_y = 0.5) + theme_minimal() + theme(legend.position = "none") + scale_fill_brewer(palette="Spectral") + labs(x = "IMDB Rating", y = "Season")
+ggplot(office_ratings, aes(x = imdb_rating, y = fct_rev(as_factor(season)), fill = season)) + geom_density_ridges() +geom_point(data = maxRating, aes(x = maxRating$imdb_rating, y = maxRating$season, label = title), inherit.aes = F) + geom_label(data = maxRating, aes(label = title), nudge_x = 0.25, nudge_y = 0.5) + theme_minimal() + theme(legend.position = "none") + scale_fill_brewer(palette="Spectral") + labs(x = "IMDB Rating", y = "Season", title = "The Office IMDB Ratings")
 ```
 
 
