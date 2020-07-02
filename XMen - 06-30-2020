@@ -1,0 +1,49 @@
+# Get the Data
+
+# Read in with tidytuesdayR package 
+# Install from CRAN via: install.packages("tidytuesdayR")
+# This loads the readme and all the datasets for the week of interest!
+
+# Either ISO-8601 date or year/week works!
+library('tidytuesdayR')
+library('tidyverse')
+library('RColorBrewer')
+
+tuesdata <- tidytuesdayR::tt_load('2020-06-30')
+tuesdata <- tidytuesdayR::tt_load(2020, week = 27)
+
+comic_bechdel <- tuesdata$comic_bechdel
+characters <- tuesdata$characters
+char_visual <- tuesdata$character_visualization
+collaborators <- tuesdata$issue_collaborators
+
+# Network Data Cleaning 
+library('igraph')
+library('extrafont')
+
+x = as.data.frame(str_split_fixed(characters$character, " = ", 2))
+x = x %>% 
+  rename(
+    C1 = V1,
+    C2= V2
+  )
+x[x==""]<-NA
+x = na.omit(x)
+
+network = cbind(x, characters)
+drops = "character"
+network = network[ , !(names(network) %in% drops)]
+
+levs <- unique(unlist(x, use.names = FALSE))
+adj = table(lapply(x, factor, levs))
+adj = na.omit(adj)
+
+# Network Graphing
+y = as.matrix(x)
+char_relation <- graph.edgelist(y, directed = FALSE)
+
+E(char_relation)$arrow.size <- .75
+l <- layout.kamada.kawai(char_relation)
+
+plot.igraph(char_relation, layout = l*0.5, vertex.color="darkgoldenrod2", vertex.label.family="Arial Black", edge.color="gray80", vertex.label.color="black", vertex.label.cex=0.8, vertex.size = 10, vertex.frame.color="darkgoldenrod2")
+
