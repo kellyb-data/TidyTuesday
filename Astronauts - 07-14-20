@@ -1,0 +1,49 @@
+---
+title: "Astronauts"
+author: "Kelly Burton"
+date: "7/18/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Import Data
+```{r}
+library('tidytuesdayR')
+library('tidyverse')
+library('RColorBrewer')
+
+tuesdata <- tidytuesdayR::tt_load('2020-07-14')
+tuesdata <- tidytuesdayR::tt_load(2020, week = 29)
+
+astronauts <- tuesdata$astronauts
+```
+
+Data Cleaning and Exploration
+```{r}
+head(astronauts)
+
+astronauts$sex = as.factor(astronauts$sex)
+astronauts$nationality = as.factor(astronauts$nationality)
+astronauts$occupation = as.factor(astronauts$occupation)
+astronauts$mission_title = as.factor(astronauts$mission_title)
+
+summary(astronauts)
+
+levels(astronauts$occupation) <- c("Commander", "Flight Engineer","Flight Engineer","MSP","Other (Journalist)","Space Tourist","Space Tourist",   "Pilot","Pilot","PSP","Space Tourist","Spaceflight Participant")
+
+ggplot(data = astronauts) + geom_col(aes(x = year_of_mission, y = hours_mission, fill = occupation)) +  theme_light()
+
+# Calculate Astronaut Age at Mission
+
+astronauts$age = (astronauts$year_of_mission - astronauts$year_of_birth)
+
+ggplot(data = astronauts) + geom_boxplot(aes(x = as.factor(year_of_mission), y = age, fill = sex)) + theme_light()
+
+```
+Format Plot
+```{r}
+ggplot(data = astronauts) + geom_point(aes(x = year_of_mission, y = age, color = sex, size = hours_mission, alpha = 0.75)) + theme_light() +  scale_x_continuous(breaks = round(seq(1960, 2020, by = 10),0)) + scale_color_brewer(palette="Set1") + guides(alpha = 'none',size = guide_legend(override.aes = list(color = 'steelblue3'))) + labs(size = 'Hours per Mission', colour = 'Gender') + ggtitle('Astronaut Demographics') + ylab('Age of Astronaut') + xlab('Year of Mission') + theme(plot.title = element_text(hjust = 0.5))
+```
